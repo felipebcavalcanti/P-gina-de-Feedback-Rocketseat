@@ -1,9 +1,11 @@
+import Avatar from "./Avatar";
 import styles from "./Comment.module.css";
+import Post from "./Post";
 
-function Comment() {
-    return (
+function Comment({ content }) {
+    return ( 
         <div className={styles.comment}>
-            <img src="https://avatars.githubusercontent.com/u/104383155?s=400&u=dd23849e0b8c60a3e7584a0684b7d09dc71e48e0&v=4" alt="" />
+            <Avatar src="https://avatars.githubusercontent.com/u/104383155?s=400&u=dd23849e0b8c60a3e7584a0684b7d09dc71e48e0&v=4" alt="" />
            
            <div className={styles.commentBox}>
                 <div className={styles.commentContent}>
@@ -18,7 +20,7 @@ function Comment() {
                         </button>
                     </header>
 
-                    <p>Muito Bom Devon, parabéns</p>
+                    <p>{content}</p>
                 </div>
 
                 <footer>

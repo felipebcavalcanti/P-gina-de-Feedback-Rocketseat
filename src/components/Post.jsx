@@ -1,34 +1,72 @@
+import Avatar from "./Avatar";
 import Comment from "./Comment";
 import styles from "./Post.module.css";
 
-function Post() {
+import { format, formatDistanceToNow } from "date-fns";
+import ptBr from "date-fns/locale/pt-BR";
+import { useState } from "react";
+
+
+
+function Post(props) {
+  //Functions for format Date.
+  const formatDate = format(props.publishAt, "d 'de' LLLL 'às' HH:mm 'h' ", {locale: ptBr})
+  const formatDateNow = formatDistanceToNow(props.publishAt, {locale: ptBr, addSuffix: true})
+
+  
+  //States for Post and Comments.
+  const [comments, setComments] = useState(["Hello world!", ]);
+  const [newCommentText, setNewCommentText] = useState("");
+
+  //Function for Submit.
+  function hadleSubmitText() {
+    event.preventDefault();
+    setComments([...comments, newCommentText]);
+  };
+
+  //Function for onChange.
+  function handleNewCommentChange() {
+    setNewCommentText(event.target.value);
+  }
+
     return(
        <article className={styles.post}>
           <header>
             <div className={styles.author}>
-                <img className={styles.avatar} src="https://avatars.githubusercontent.com/u/104383155?s=400&u=dd23849e0b8c60a3e7584a0684b7d09dc71e48e0&v=4" alt="profile" />
+                <Avatar hasBorder src= {props.author.avatarUrl} alt="profile" />
                 <div className={styles.authorInfo}>
-                  <strong>Felipe Cavalcanti</strong>
-                  <span>Web Developer</span>
+                  <strong>{props.author.name}</strong>
+                  <span>{props.author.role}</span>
                 </div>
             </div>
 
-            <time title="13 de julho" dateTime="2022-07-13 11:00:00">Publicado há 1h</time>
-
+            <time title={formatDate} dateTime={props.publishAt.toISOString()}>
+              {formatDateNow}
+            </time>
+                
           </header>
 
           <div className={styles.content}>
-            <p>AAAAAAAAAAAAAAAAAAAAAAAAAAAA</p>
-            <p>BBBBBBBBBBBBBBBBBBBBBBBBBBBB</p>
-            <p><a href="#">CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC</a></p>
-            <p><a href="#">DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD</a></p>
+            {props.content.map(line => { 
+              if (line.type == "paragraph") {
+                return <p>{line.content}</p>
+              } else if (line.type == "link") {
+                return <p><a href="#">{line.content}</a></p>
+              }
+        
+            })}
 
           </div>
 
-          <form className={styles.commentForm}>
+          <form onSubmit={hadleSubmitText} className={styles.commentForm}>
             <strong>Deixe seu feedback</strong>
 
-            <textarea placeholder="Deixe um comentário" />
+            <textarea 
+            placeholder="Deixe um comentário..."
+            name="comment" 
+            onChange={handleNewCommentChange}
+            value={newCommentText}
+            />
 
             <footer>
 
@@ -39,9 +77,9 @@ function Post() {
           </form>
 
           <div className={styles.commentList}>
-            <Comment /> 
-            <Comment /> 
-            <Comment />            
+            {comments.map(comment => {
+              return <Comment content={comment}/>
+            })}       
           </div>
        </article>
     );
